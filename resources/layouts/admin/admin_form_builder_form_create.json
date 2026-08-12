@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0", "layout_name": "admin_form_builder_form_create", "extends": "glitter-form_builder.admin_form_builder_form_edit",
+  "permissions": ["glitter-form_builder.forms.create"],
+  "meta": { "title": "$t:glitter-form_builder.admin.forms.create" },
+  "state": { "createMode": true, "formDesigner": { "schema": { "schemaVersion": "1.0", "fields": [] }, "metadata": { "slug": "", "title": {}, "description": {}, "accessMode": "authenticated_only", "retentionMode": "manual", "retentionDays": null, "retentionAcknowledged": false }, "dirty": false, "saving": false, "creating": false, "validating": false, "publishing": false, "errors": [], "warnings": [], "metadataErrors": {}, "globalErrors": [] } }
+}

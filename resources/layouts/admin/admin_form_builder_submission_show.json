@@ -1,0 +1,34 @@
+{
+  "version": "1.0.0",
+  "layout_name": "admin_form_builder_submission_show",
+  "extends": "_admin_base",
+  "permissions": ["glitter-form_builder.submissions.read"],
+  "meta": { "title": "$t:glitter-form_builder.admin.submissions.detail_title" },
+  "data_sources": [{ "id": "submission", "type": "api", "endpoint": "/api/modules/glitter-form_builder/admin/submissions/{{route.id}}", "method": "GET", "auto_fetch": true, "auth_required": true }],
+  "slots": { "content": [{
+    "type": "basic", "name": "Div", "props": { "className": "gfb-admin", "data-module": "glitter-form_builder" }, "children": [
+      { "type": "basic", "name": "Div", "props": { "className": "gfb-admin-header" }, "children": [
+        { "type": "basic", "name": "Div", "props": { "className": "gfb-admin-header-copy" }, "children": [
+          { "type": "basic", "name": "H1", "props": { "className": "gfb-admin-header-title" }, "text": "$t:glitter-form_builder.admin.submissions.detail_title" },
+          { "type": "basic", "name": "P", "props": { "className": "gfb-admin-header-description" }, "text": "{{submission.data.uuid}}" }
+        ] },
+        { "type": "basic", "name": "Div", "props": { "className": "gfb-admin-header-actions" }, "children": [
+          { "type": "basic", "name": "Button", "props": { "type": "button" }, "actions": [{ "type": "click", "handler": "navigate", "params": { "path": "/admin/form-builder/submissions" } }], "children": [{ "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.actions.back" }] }
+        ] }
+      ] },
+      { "type": "basic", "name": "Div", "props": { "className": "gfb-panel" }, "children": [
+        { "type": "basic", "name": "Span", "text": "{{submission.data.form.title[$locale] || submission.data.form.slug}}" },
+        { "type": "basic", "name": "Span", "text": "{{submission.data.status}}" },
+        { "type": "basic", "name": "Span", "text": "{{submission.data.received_at}}" },
+        { "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.submissions.purge_deferred" }
+      ] },
+      { "type": "basic", "name": "Div", "props": { "className": "gfb-panel" }, "children": [
+        { "type": "basic", "name": "Div", "iteration": { "source": "{{submission.data.fields}}", "item_var": "field" }, "props": { "className": "gfb-submission-field" }, "children": [
+          { "type": "basic", "name": "Span", "props": { "className": "gfb-field-control-label" }, "text": "{{field.label[$locale] || field.key}}" },
+          { "type": "basic", "name": "Span", "if": "{{!field.redacted}}", "text": "{{field.display_value}}" },
+          { "type": "basic", "name": "Span", "if": "{{field.redacted}}", "text": "$t:glitter-form_builder.admin.submissions.redacted" }
+        ] }
+      ] }
+    ]
+  }] }
+}

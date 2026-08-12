@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "routes": [
+    { "path": "*/admin/form-builder/forms", "layout": "admin_form_builder_form_index", "auth_required": true, "meta": { "title": "$t:glitter-form_builder.admin.forms.title" } },
+    { "path": "*/admin/form-builder/forms/create", "layout": "admin_form_builder_form_create", "auth_required": true, "meta": { "title": "$t:glitter-form_builder.admin.forms.create" } },
+    { "path": "*/admin/form-builder/forms/:id/edit", "layout": "admin_form_builder_form_edit", "auth_required": true, "meta": { "title": "$t:glitter-form_builder.admin.forms.edit" } },
+    { "path": "*/admin/form-builder/submissions", "layout": "admin_form_builder_submission_index", "auth_required": true, "meta": { "title": "$t:glitter-form_builder.admin.submissions.title" } },
+    { "path": "*/admin/form-builder/submissions/:id", "layout": "admin_form_builder_submission_show", "auth_required": true, "meta": { "title": "$t:glitter-form_builder.admin.submissions.detail_title" } }
+  ]
+}

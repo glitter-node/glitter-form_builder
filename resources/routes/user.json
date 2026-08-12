@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "routes": [
+    {
+      "path": "*/forms/:slug",
+      "layout": "user_form_builder_form_show",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:glitter-form_builder.public.form.title"
+      }
+    }
+  ]
+}

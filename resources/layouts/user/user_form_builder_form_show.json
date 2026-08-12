@@ -1,0 +1,202 @@
+{
+  "version": "1.0.0",
+  "layout_name": "user_form_builder_form_show",
+  "extends": "_user_base",
+  "meta": {
+    "title": "$t:glitter-form_builder.public.form.title",
+    "description": "$t:glitter-form_builder.public.form.description"
+  },
+  "data_sources": [
+    {
+      "id": "publicForm",
+      "type": "api",
+      "endpoint": "/api/modules/glitter-form_builder/forms/{{route.slug}}/schema",
+      "method": "GET",
+      "auto_fetch": true,
+      "auth_required": false
+    }
+  ],
+  "state": {
+    "publicSubmission": {
+      "values": {}, "errors": {}, "globalErrors": [], "submitting": false,
+      "submitted": false, "receipt": null, "idempotencyKey": ""
+    }
+  },
+  "init_actions": [{ "handler": "glitter-form_builder.initializeSubmission" }],
+  "slots": {
+    "content": [
+      {
+        "type": "basic",
+        "name": "Div",
+        "props": {
+          "className": "gfb-public",
+          "data-module": "glitter-form_builder"
+        },
+        "children": [
+          {
+            "type": "basic",
+            "name": "H1",
+            "props": { "className": "gfb-public-title" },
+            "text": "{{publicForm.data.form.title[$locale] || publicForm.data.form.slug}}"
+          },
+          {
+            "type": "basic",
+            "name": "Span",
+            "props": { "className": "gfb-public-description" },
+            "text": "{{publicForm.data.form.description[$locale] || ''}}"
+          },
+          {
+            "type": "basic",
+            "name": "Form",
+            "props": {
+              "className": "gfb-public-form"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "Div",
+                "iteration": {
+                  "source": "{{publicForm.data.renderer.fields}}",
+                  "item_var": "field"
+                },
+                "props": {
+                  "className": "gfb-public-field"
+                },
+                "children": [
+                  {
+                    "type": "basic",
+                    "name": "Label",
+                    "if": "{{field.component !== 'Checkbox'}}",
+                    "props": { "className": "gfb-public-field-label", "htmlFor": "gfb-public-{{field.key}}" },
+                    "children": [
+                      {
+                        "type": "basic",
+                        "name": "Span",
+                        "text": "{{field.label[$locale] || field.key}}"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "basic",
+                    "name": "Span",
+                    "if": "{{field.description[$locale]}}",
+                    "text": "{{field.description[$locale]}}"
+                  },
+                  {
+                    "type": "basic",
+                    "name": "Textarea",
+                    "if": "{{field.component === 'Textarea'}}",
+                    "props": {
+                      "className": "gfb-public-field-control",
+                      "disabled": "{{_local.publicSubmission.submitting || _local.publicSubmission.submitted}}",
+                      "id": "gfb-public-{{field.key}}",
+                      "name": "{{field.key}}",
+                      "value": "{{_local.publicSubmission.values[field.key] || ''}}",
+                      "rows": 4
+                    },
+                    "actions": [{ "type": "change", "handler": "glitter-form_builder.updateSubmissionField", "params": { "key": "{{field.key}}", "value": "{{$event.target.value}}" } }]
+                  },
+                  {
+                    "type": "basic",
+                    "name": "Select",
+                    "if": "{{field.component === 'Select'}}",
+                    "props": {
+                      "className": "gfb-public-field-control",
+                      "disabled": "{{_local.publicSubmission.submitting || _local.publicSubmission.submitted}}",
+                      "id": "gfb-public-{{field.key}}",
+                      "name": "{{field.key}}",
+                      "value": "{{_local.publicSubmission.values[field.key] || ''}}",
+                      "options": "{{field.options}}"
+                    },
+                    "actions": [{ "type": "change", "handler": "glitter-form_builder.updateSubmissionField", "params": { "key": "{{field.key}}", "value": "{{$event.target.value}}" } }]
+                  },
+                  {
+                    "type": "basic",
+                    "name": "Label",
+                    "if": "{{field.component === 'Checkbox'}}",
+                    "props": { "className": "gfb-public-consent" },
+                    "children": [
+                      {
+                        "type": "basic", "name": "Checkbox",
+                        "props": {
+                          "className": "gfb-public-consent-checkbox",
+                          "disabled": "{{_local.publicSubmission.submitting || _local.publicSubmission.submitted}}",
+                          "name": "{{field.key}}",
+                          "checked": "{{_local.publicSubmission.values[field.key] === true}}",
+                          "required": "{{field.required}}"
+                        },
+                        "actions": [{ "type": "change", "handler": "glitter-form_builder.updateSubmissionField", "params": { "key": "{{field.key}}", "value": "{{$event.target.checked}}" } }]
+                      },
+                      {
+                        "type": "basic", "name": "Span",
+                        "props": { "className": "gfb-public-consent-label" },
+                        "text": "{{field.label[$locale] || field.key}}"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "basic",
+                    "name": "Input",
+                    "if": "{{field.component === 'Input'}}",
+                    "props": {
+                      "className": "gfb-public-field-control",
+                      "disabled": "{{_local.publicSubmission.submitting || _local.publicSubmission.submitted}}",
+                      "id": "gfb-public-{{field.key}}",
+                      "name": "{{field.key}}",
+                      "type": "{{field.inputType}}",
+                      "value": "{{_local.publicSubmission.values[field.key] || ''}}"
+                    },
+                    "actions": [{ "type": "change", "handler": "glitter-form_builder.updateSubmissionField", "params": { "key": "{{field.key}}", "value": "{{$event.target.value}}" } }]
+                  },
+                  {
+                    "type": "basic", "name": "Span",
+                    "if": "{{_local.publicSubmission.errors['fields.' + field.key]?.length > 0}}",
+                    "props": { "className": "gfb-public-field-error" },
+                    "text": "{{_local.publicSubmission.errors['fields.' + field.key][0]}}"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "props": {
+                  "className": "gfb-public-submit",
+                  "disabled": "{{_local.publicSubmission.submitting || _local.publicSubmission.submitted}}",
+                  "type": "button"
+                },
+                "actions": [{ "type": "click", "handler": "glitter-form_builder.submitForm", "params": { "slug": "{{route.slug}}", "locale": "{{$locale}}", "timezone": "{{_global.settings?.general?.timezone || 'UTC'}}" } }],
+                "children": [
+                  {
+                    "type": "basic",
+                    "name": "Span",
+                    "text": "$t:glitter-form_builder.public.form.submit"
+                  }
+                ]
+              },
+              {
+                "type": "basic", "name": "Span",
+                "if": "{{_local.publicSubmission.submitting}}",
+                "text": "$t:glitter-form_builder.public.form.submitting"
+              },
+              {
+                "type": "basic", "name": "Div",
+                "if": "{{_local.publicSubmission.submitted}}",
+                "props": { "className": "gfb-public-success" },
+                "children": [
+                  { "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.public.form.success" },
+                  { "type": "basic", "name": "Span", "text": "{{_local.publicSubmission.receipt.uuid}}" }
+                ]
+              },
+              {
+                "type": "basic", "name": "Span",
+                "if": "{{_local.publicSubmission.globalErrors.length > 0}}",
+                "props": { "className": "gfb-public-field-error" },
+                "text": "$t:glitter-form_builder.public.form.failed"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
