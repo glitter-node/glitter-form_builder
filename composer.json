@@ -1,0 +1,25 @@
+{
+    "name": "modules/glitter-form_builder",
+    "description": "GnuBoard7 form definitions and read-only published form preview",
+    "type": "library",
+    "version": "0.3.16",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Glitter.kr"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Modules\\Glitter\\FormBuilder\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Glitter\\FormBuilder\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^8.2"
+    }
+}

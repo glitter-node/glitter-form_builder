@@ -1,0 +1,112 @@
+{
+  "version": "1.0.0", "layout_name": "admin_form_builder_form_edit", "extends": "_admin_base",
+  "permissions": ["glitter-form_builder.forms.read"],
+  "meta": { "title": "$t:glitter-form_builder.admin.forms.edit", "description": "$t:glitter-form_builder.admin.designer.description" },
+  "state": { "createMode": false, "formDesigner": { "schema": { "schemaVersion": "1.0", "fields": [] }, "metadata": { "slug": "", "title": {}, "description": {}, "accessMode": "authenticated_only", "retentionMode": "manual", "retentionDays": null, "retentionAcknowledged": false }, "selectedFieldKey": null, "dirty": false, "saving": false, "creating": false, "validating": false, "publishing": false, "errors": [], "warnings": [], "metadataErrors": {}, "globalErrors": [] } },
+  "data_sources": [
+    { "id": "form", "type": "api", "endpoint": "/api/modules/glitter-form_builder/admin/forms/{{route.id}}", "method": "GET", "auto_fetch": true, "if": "{{route?.id}}", "auth_required": true, "onSuccess": { "handler": "glitter-form_builder.hydrateForm", "params": { "resource": "{{response.data.data}}" }, "resultTo": { "target": "_local", "key": "formDesigner", "merge": "replace" } } },
+    { "id": "fieldTypes", "type": "api", "endpoint": "/api/modules/glitter-form_builder/admin/field-types", "method": "GET", "auto_fetch": true, "auth_required": true }
+  ],
+  "init_actions": [{ "handler": "glitter-form_builder.initialize", "params": { "schema": "{{form?.data?.draft_schema || _local.formDesigner.schema}}", "metadata": "{{form?.data || _local.formDesigner.metadata}}" } }],
+  "slots": { "content": [{
+    "type": "basic", "name": "Div", "props": { "className": "gfb-admin", "data-module": "glitter-form_builder" }, "children": [
+      { "id": "gfb_designer_header", "type": "basic", "name": "Div", "props": { "className": "gfb-admin-header" }, "children": [
+        { "id": "gfb_designer_header_copy", "type": "basic", "name": "Div", "props": { "className": "gfb-admin-header-copy" }, "children": [
+          { "type": "basic", "name": "H1", "props": { "className": "gfb-admin-header-title" }, "text": "$t:glitter-form_builder.admin.designer.title" },
+          { "type": "basic", "name": "P", "props": { "className": "gfb-admin-header-description" }, "text": "$t:glitter-form_builder.admin.designer.description" }
+        ] },
+        { "id": "gfb_designer_header_actions", "type": "basic", "name": "Div", "props": { "className": "gfb-admin-header-actions" }, "children": [
+          { "type": "basic", "name": "Button", "if": "{{_local.createMode}}", "props": { "type": "button", "className": "gfb-header-action", "disabled": "{{_local.formDesigner.creating}}" }, "actions": [{ "type": "click", "handler": "glitter-form_builder.createForm", "params": { "canCreate": true, "designerState": "{{_local.formDesigner}}", "defaultLocale": "{{$locale}}", "supportedLocales": "{{$locales}}" } }], "children": [{ "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.actions.create" }] },
+          { "type": "basic", "name": "Button", "props": { "type": "button", "className": "gfb-header-action", "disabled": "{{_local.createMode || form.data.abilities.can_update !== true || _local.formDesigner.saving}}" }, "actions": [{ "type": "click", "handler": "glitter-form_builder.saveDraft", "params": { "formId": "{{route.id}}", "designerState": "{{_local.formDesigner}}" } }], "children": [{ "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.actions.save_draft" }] },
+          { "type": "basic", "name": "Button", "props": { "type": "button", "className": "gfb-header-action", "disabled": "{{_local.formDesigner.validating}}" }, "actions": [{ "type": "click", "handler": "glitter-form_builder.validateSchema", "params": { "designerState": "{{_local.formDesigner}}", "mode": "draft", "defaultLocale": "{{$locale}}", "supportedLocales": "{{$locales}}" } }], "children": [{ "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.actions.validate" }] },
+          { "type": "basic", "name": "Button", "props": { "type": "button", "className": "gfb-header-action", "disabled": "{{_local.formDesigner.abilities.canPublish !== true || _local.formDesigner.publishing}}" }, "actions": [{ "type": "click", "handler": "glitter-form_builder.publish", "params": { "formId": "{{route.id}}", "canPublish": "{{_local.formDesigner.abilities.canPublish}}", "designerState": "{{_local.formDesigner}}", "defaultLocale": "{{$locale}}", "supportedLocales": "{{$locales}}", "warningConfirmation": "$t:glitter-form_builder.admin.publish.warning_confirmation", "retentionRequired": "$t:glitter-form_builder.admin.publish.retention_required", "publishPermissionError": "$t:glitter-form_builder.admin.publish.permission_error", "publishFormError": "$t:glitter-form_builder.admin.publish.form_error", "publishStateError": "$t:glitter-form_builder.admin.publish.state_error", "publishRequestError": "$t:glitter-form_builder.admin.publish.request_error" } }], "children": [{ "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.actions.publish" }] }
+        ] }
+      ] },
+      { "type": "basic", "name": "Div", "props": { "className": "gfb-panel" }, "children": [
+        { "type": "basic", "name": "Span", "if": "{{_local.formDesigner.globalErrors?.[0]}}", "props": { "className": "gfb-metadata-error" }, "text": "{{_local.formDesigner.globalErrors?.[0]}}" },
+        { "type": "basic", "name": "Input", "props": { "value": "{{_local.formDesigner.metadata.slug || ''}}", "placeholder": "$t:glitter-form_builder.admin.metadata.slug" }, "actions": [{ "type": "change", "handler": "glitter-form_builder.updateMetadata", "params": { "property": "slug", "value": "{{$event.target.value}}" } }] },
+        { "type": "basic", "name": "Span", "if": "{{_local.formDesigner.metadataErrors.slug?.[0]}}", "props": { "className": "gfb-metadata-error" }, "text": "{{_local.formDesigner.metadataErrors.slug?.[0]}}" },
+        { "type": "basic", "name": "Input", "props": { "value": "{{_local.formDesigner.metadata.title?.[$locale] || ''}}", "placeholder": "$t:glitter-form_builder.admin.metadata.title" }, "actions": [{ "type": "change", "handler": "glitter-form_builder.updateMetadata", "params": { "property": "title", "locale": "{{$locale}}", "value": "{{$event.target.value}}" } }] },
+        { "type": "basic", "name": "Span", "if": "{{_local.formDesigner.metadataErrors.title?.[0]}}", "props": { "className": "gfb-metadata-error" }, "text": "{{_local.formDesigner.metadataErrors.title?.[0]}}" },
+        { "type": "basic", "name": "Input", "props": { "value": "{{_local.formDesigner.metadata.description?.[$locale] || ''}}", "placeholder": "$t:glitter-form_builder.admin.metadata.description" }, "actions": [{ "type": "change", "handler": "glitter-form_builder.updateMetadata", "params": { "property": "description", "locale": "{{$locale}}", "value": "{{$event.target.value}}" } }] },
+        { "type": "basic", "name": "Span", "if": "{{_local.formDesigner.metadataErrors.description?.[0]}}", "props": { "className": "gfb-metadata-error" }, "text": "{{_local.formDesigner.metadataErrors.description?.[0]}}" },
+        { "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.metadata.access_mode" },
+        { "type": "composite", "name": "Select", "props": { "value": "{{_local.formDesigner.metadata.accessMode || 'authenticated_only'}}", "options": [{ "value": "guest_and_authenticated", "label": "$t:glitter-form_builder.admin.metadata.access_guest" }, { "value": "authenticated_only", "label": "$t:glitter-form_builder.admin.metadata.access_authenticated" }, { "value": "admin_only", "label": "$t:glitter-form_builder.admin.metadata.access_admin" }] }, "actions": [{ "type": "change", "handler": "glitter-form_builder.updateMetadata", "params": { "property": "access_mode", "value": "{{$event.target.value}}" } }] },
+        { "type": "basic", "name": "Span", "if": "{{_local.formDesigner.metadataErrors.access_mode?.[0]}}", "props": { "className": "gfb-metadata-error" }, "text": "{{_local.formDesigner.metadataErrors.access_mode?.[0]}}" },
+        { "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.metadata.retention_mode" },
+        { "type": "composite", "name": "Select", "props": { "value": "{{_local.formDesigner.metadata.retentionMode || 'manual'}}", "options": [{ "value": "manual", "label": "$t:glitter-form_builder.admin.metadata.retention_manual" }, { "value": "forever", "label": "$t:glitter-form_builder.admin.metadata.retention_forever" }, { "value": "days", "label": "$t:glitter-form_builder.admin.metadata.retention_days_mode" }] }, "actions": [{ "type": "change", "handler": "glitter-form_builder.updateMetadata", "params": { "property": "retention_mode", "value": "{{$event.target.value}}" } }] },
+        { "type": "basic", "name": "Span", "if": "{{_local.formDesigner.metadataErrors.retention_mode?.[0]}}", "props": { "className": "gfb-metadata-error" }, "text": "{{_local.formDesigner.metadataErrors.retention_mode?.[0]}}" },
+        { "type": "basic", "name": "Input", "if": "{{_local.formDesigner.metadata.retentionMode === 'days'}}", "props": { "type": "number", "min": 1, "max": 36500, "value": "{{_local.formDesigner.metadata.retentionDays || ''}}", "placeholder": "$t:glitter-form_builder.admin.metadata.retention_days" }, "actions": [{ "type": "change", "handler": "glitter-form_builder.updateMetadata", "params": { "property": "retention_days", "value": "{{$event.target.value}}" } }] },
+        { "type": "basic", "name": "Span", "if": "{{_local.formDesigner.metadataErrors.retention_days?.[0]}}", "props": { "className": "gfb-metadata-error" }, "text": "{{_local.formDesigner.metadataErrors.retention_days?.[0]}}" },
+        { "type": "basic", "name": "Checkbox", "props": { "checked": "{{_local.formDesigner.metadata.retentionAcknowledged === true}}" }, "actions": [{ "type": "change", "handler": "glitter-form_builder.updateMetadata", "params": { "property": "retention_acknowledged", "value": "{{$event.target.checked}}" } }] },
+        { "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.metadata.retention_acknowledgement" },
+        { "type": "basic", "name": "Span", "if": "{{_local.formDesigner.metadataErrors.retention_acknowledged?.[0]}}", "props": { "className": "gfb-metadata-error" }, "text": "{{_local.formDesigner.metadataErrors.retention_acknowledged?.[0]}}" },
+        { "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.metadata.retention_notice" }
+      ] },
+      { "type": "basic", "name": "Div", "props": { "className": "gfb-designer-grid" }, "children": [
+        { "type": "basic", "name": "Div", "props": { "className": "gfb-panel gfb-palette-panel" }, "children": [
+          { "type": "basic", "name": "H2", "props": { "className": "gfb-panel-title" }, "text": "$t:glitter-form_builder.admin.palette.title" },
+          { "type": "basic", "name": "Div", "props": { "className": "gfb-palette-list" }, "children": [
+            { "type": "basic", "name": "Button", "iteration": { "source": "{{fieldTypes.data.fieldTypes}}", "item_var": "fieldType" }, "props": { "type": "button", "className": "gfb-palette-item" }, "actions": [{ "type": "click", "handler": "glitter-form_builder.addField", "params": { "type": "{{fieldType.type}}", "locale": "{{$locale}}", "supportedLocales": "{{$locales}}", "errorMessage": "$t:glitter-form_builder.admin.palette.add_error" } }], "children": [{ "type": "basic", "name": "Span", "text": "{{fieldType.name}}" }] }
+          ] }
+        ] },
+        { "type": "basic", "name": "Div", "props": { "className": "gfb-panel gfb-canvas-panel" }, "children": [
+          { "type": "basic", "name": "H2", "props": { "className": "gfb-panel-title" }, "text": "$t:glitter-form_builder.admin.canvas.title" },
+          { "type": "basic", "name": "Div", "props": { "className": "gfb-field-card" }, "iteration": { "source": "{{_local.formDesigner.schema.fields}}", "item_var": "field" }, "children": [
+            { "type": "basic", "name": "Button", "props": { "type": "button", "className": "gfb-field-summary" }, "actions": [{ "type": "click", "handler": "glitter-form_builder.selectField", "params": { "key": "{{field.key}}" } }], "children": [
+              { "type": "basic", "name": "Span", "props": { "className": "gfb-field-label" }, "text": "{{field.label[$locale] || field.key}}" },
+              { "type": "basic", "name": "Span", "props": { "className": "gfb-field-type" }, "text": "{{field.type}}" }
+            ] },
+            { "type": "basic", "name": "Div", "props": { "className": "gfb-field-actions" }, "children": [
+              { "type": "basic", "name": "Button", "props": { "type": "button" }, "actions": [{ "type": "click", "handler": "glitter-form_builder.moveFieldUp", "params": { "key": "{{field.key}}" } }], "children": [{ "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.actions.move_up" }] },
+              { "type": "basic", "name": "Button", "props": { "type": "button" }, "actions": [{ "type": "click", "handler": "glitter-form_builder.moveFieldDown", "params": { "key": "{{field.key}}" } }], "children": [{ "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.actions.move_down" }] },
+              { "type": "basic", "name": "Button", "props": { "type": "button" }, "actions": [{ "type": "click", "handler": "glitter-form_builder.duplicateField", "params": { "key": "{{field.key}}" } }], "children": [{ "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.actions.duplicate" }] },
+              { "type": "basic", "name": "Button", "props": { "type": "button" }, "actions": [{ "type": "click", "handler": "glitter-form_builder.removeField", "params": { "key": "{{field.key}}" } }], "children": [{ "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.actions.delete" }] }
+            ] }
+          ] },
+          { "type": "basic", "name": "Div", "if": "{{_local.formDesigner.schema.fields.length === 0}}", "props": { "className": "gfb-canvas-empty" }, "children": [
+            { "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.canvas.empty" }
+          ] }
+        ] },
+        { "type": "basic", "name": "Div", "props": { "className": "gfb-panel gfb-inspector-panel" }, "children": [
+          { "type": "basic", "name": "H2", "props": { "className": "gfb-panel-title" }, "text": "$t:glitter-form_builder.admin.inspector.title" },
+          { "type": "basic", "name": "Div", "if": "{{_local.formDesigner.selectedFieldIndex == null}}", "props": { "className": "gfb-inspector-empty" }, "children": [
+            { "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.inspector.empty" }
+          ] },
+          { "type": "basic", "name": "Div", "if": "{{_local.formDesigner.selectedFieldIndex != null}}", "props": { "className": "gfb-inspector-section" }, "children": [
+            { "type": "basic", "name": "H3", "props": { "className": "gfb-inspector-section-heading" }, "text": "$t:glitter-form_builder.admin.inspector.general" },
+            { "type": "basic", "name": "Div", "props": { "className": "gfb-field-control" }, "children": [
+              { "type": "basic", "name": "Span", "props": { "className": "gfb-field-control-label" }, "text": "$t:glitter-form_builder.admin.inspector.key" },
+              { "type": "basic", "name": "Input", "props": { "value": "{{_local.formDesigner.schema.fields[_local.formDesigner.selectedFieldIndex]?.key || ''}}", "placeholder": "$t:glitter-form_builder.admin.inspector.key" }, "actions": [{ "type": "change", "handler": "glitter-form_builder.updateSelectedField", "params": { "property": "key", "value": "{{$event.target.value}}" } }] }
+            ] },
+            { "type": "basic", "name": "Div", "props": { "className": "gfb-field-control" }, "children": [
+              { "type": "basic", "name": "Span", "props": { "className": "gfb-field-control-label" }, "text": "$t:glitter-form_builder.admin.inspector.label" },
+              { "type": "basic", "name": "Input", "props": { "value": "{{_local.formDesigner.schema.fields[_local.formDesigner.selectedFieldIndex]?.label[$locale] || ''}}", "placeholder": "$t:glitter-form_builder.admin.inspector.label" }, "actions": [{ "type": "change", "handler": "glitter-form_builder.updateSelectedField", "params": { "property": "label", "locale": "{{$locale}}", "value": "{{$event.target.value}}" } }] }
+            ] },
+            { "type": "basic", "name": "Span", "props": { "className": "gfb-field-type" }, "text": "{{_local.formDesigner.schema.fields[_local.formDesigner.selectedFieldIndex].type}}" }
+          ] },
+          { "type": "basic", "name": "Div", "if": "{{_local.formDesigner.selectedFieldIndex != null}}", "props": { "className": "gfb-inspector-section" }, "children": [
+            { "type": "basic", "name": "H3", "props": { "className": "gfb-inspector-section-heading" }, "text": "$t:glitter-form_builder.admin.inspector.validation" },
+            { "type": "basic", "name": "Span", "if": "{{_local.formDesigner.schema.fields[_local.formDesigner.selectedFieldIndex]?.type === 'checkbox'}}", "text": "$t:glitter-form_builder.admin.inspector.checkbox_boolean" },
+            { "type": "basic", "name": "Span", "if": "{{_local.formDesigner.schema.fields[_local.formDesigner.selectedFieldIndex]?.type === 'number'}}", "text": "$t:glitter-form_builder.admin.inspector.number_decimal" }
+          ] },
+          { "type": "basic", "name": "Div", "if": "{{['select','radio'].includes(_local.formDesigner.schema.fields[_local.formDesigner.selectedFieldIndex]?.type)}}", "props": { "className": "gfb-inspector-section" }, "children": [
+            { "type": "basic", "name": "H3", "props": { "className": "gfb-inspector-section-heading" }, "text": "$t:glitter-form_builder.admin.inspector.options" },
+            { "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.inspector.options_help" }
+          ] },
+          { "type": "basic", "name": "Div", "if": "{{_local.formDesigner.selectedFieldIndex != null}}", "props": { "className": "gfb-inspector-section" }, "children": [
+            { "type": "basic", "name": "H3", "props": { "className": "gfb-inspector-section-heading" }, "text": "$t:glitter-form_builder.admin.inspector.advanced" },
+            { "type": "basic", "name": "Span", "if": "{{_local.formDesigner.schema.fields[_local.formDesigner.selectedFieldIndex]?.type === 'hidden'}}", "text": "$t:glitter-form_builder.admin.inspector.hidden_warning" },
+            { "type": "basic", "name": "Span", "if": "{{_local.formDesigner.schema.fields[_local.formDesigner.selectedFieldIndex]?.type === 'consent'}}", "text": "$t:glitter-form_builder.admin.inspector.consent_notice" }
+          ] }
+        ] }
+      ] },
+      { "type": "basic", "name": "Div", "props": { "className": "gfb-panel" }, "children": [
+        { "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.issues.title" },
+        { "type": "basic", "name": "Span", "iteration": { "source": "{{_local.formDesigner.errors}}", "item_var": "issue" }, "props": { "className": "gfb-issue-error" }, "text": "{{issue.message}}" },
+        { "type": "basic", "name": "Span", "iteration": { "source": "{{_local.formDesigner.warnings}}", "item_var": "issue" }, "props": { "className": "gfb-issue-warning" }, "text": "{{issue.message}}" },
+        { "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.issues.warning_publish_notice" }
+      ] }
+    ]
+  }] }
+}

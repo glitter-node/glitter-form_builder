@@ -1,0 +1,34 @@
+{
+    "identifier": "glitter-form_builder",
+    "vendor": "Glitter.kr",
+    "name": {
+        "ko": "반짝이 폼 관리",
+        "en": "Glitter Form Management"
+    },
+    "version": "0.3.16",
+    "license": "MIT",
+    "description": {
+        "ko": "GnuBoard7 폼 정의, 게시, 안전한 사용자 제출 접수 및 조회",
+        "en": "GnuBoard7 form definitions, publishing, and safe submission receipt and review"
+    },
+    "g7_version": ">=7.0.5",
+    "assets": {
+        "js": {
+            "entry": "resources/js/index.ts",
+            "output": "dist/js/module.iife.js"
+        },
+        "css": {
+            "entry": "resources/css/main.css",
+            "output": "dist/css/module.css"
+        },
+        "handlers": true
+    },
+    "loading": {
+        "strategy": "global",
+        "priority": 100
+    },
+    "dependencies": {
+        "modules": {},
+        "plugins": {}
+    }
+}

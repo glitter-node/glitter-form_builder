@@ -1,0 +1,119 @@
+{
+  "module": {
+    "name": "Glitter Form Management",
+    "description": "GnuBoard7 form definitions and read-only published form preview"
+  },
+  "admin": {
+    "forms": {
+      "title": "Forms",
+      "description": "Manage form definitions and published revisions.",
+      "create": "Create form",
+      "edit": "Edit form",
+      "search": "Search title or slug",
+      "status_all": "All statuses",
+      "empty": "No forms are registered."
+    },
+    "status": {
+      "draft": "Draft",
+      "published": "Published",
+      "archived": "Archived"
+    },
+    "actions": {
+      "search": "Search",
+      "create": "Create form",
+      "edit": "Edit",
+      "save_draft": "Save draft",
+      "validate": "Validate",
+      "publish": "Publish",
+      "move_up": "Move up",
+      "move_down": "Move down",
+      "duplicate": "Duplicate",
+      "delete": "Delete",
+      "view": "View",
+      "back": "Back to list"
+    },
+    "designer": {
+      "title": "Form designer",
+      "description": "Edit the Canonical Form Schema using an ordered field editor."
+    },
+    "metadata": {
+      "slug": "Slug",
+      "title": "Title",
+      "description": "Description",
+      "access_mode": "Access mode",
+      "access_guest": "Guests and authenticated users",
+      "access_authenticated": "Authenticated users only",
+      "access_admin": "Administrators only",
+      "retention_mode": "Retention mode",
+      "retention_manual": "Manual retention",
+      "retention_forever": "Keep forever",
+      "retention_days_mode": "Delete after a set number of days",
+      "retention_days": "Retention days",
+      "retention_acknowledgement": "I acknowledge the configured retention policy.",
+      "retention_notice": "Review the privacy retention policy before publishing."
+    },
+    "palette": {
+      "add_error": "The field could not be added. Please try again.",
+      "title": "Field palette"
+    },
+    "canvas": {
+      "title": "Field order",
+      "empty": "Add a field from the palette."
+    },
+    "inspector": {
+      "title": "Field properties",
+      "empty": "Select a field to edit its properties.",
+      "general": "General",
+      "key": "Field key",
+      "label": "Field label",
+      "validation": "Validation",
+      "options": "Options",
+      "options_help": "Manage stable option values and localized labels in order.",
+      "checkbox_boolean": "Checkbox is a single boolean field.",
+      "number_decimal": "Number values remain decimal strings rather than floating-point values.",
+      "advanced": "Advanced",
+      "hidden_warning": "Hidden fields must not be used for authorization or security decisions.",
+      "consent_notice": "Consent fields cannot default to consented."
+    },
+    "issues": {
+      "title": "Schema validation results",
+      "warning_publish_notice": "Warnings do not block publishing, but require confirmation."
+    },
+    "publish": {
+      "warning_confirmation": "Validation warnings exist. Publish anyway?",
+      "retention_required": "Acknowledge the retention policy before publishing.",
+      "permission_error": "You do not have permission to publish this form.",
+      "form_error": "The form to publish could not be identified.",
+      "state_error": "The form designer is not ready.",
+      "request_error": "The form could not be published. Please try again."
+    },
+    "submissions": {
+      "title": "Submissions",
+      "description": "Review submissions received through published forms.",
+      "detail_title": "Submission details",
+      "form_filter": "Form UUID or slug",
+      "status_all": "All statuses",
+      "empty": "No submissions have been received.",
+      "redacted": "Redacted sensitive value.",
+      "purge_deferred": "Automatic deletion is not active yet. Retention due dates are informational."
+    },
+    "submission_status": {
+      "received": "Received",
+      "processed": "Processed",
+      "processing_failed": "Processing failed",
+      "cancelled": "Cancelled"
+    },
+    "pagination": { "previous": "Previous", "next": "Next" }
+  },
+  "public": {
+    "form": {
+      "title": "Form",
+      "description": "View the published form.",
+      "submission_deferred": "Submission is not available yet.",
+      "submit": "Submit",
+      "submitting": "Submitting.",
+      "success": "Submission received. Receipt:",
+      "failed": "The submission failed. Review the values and try again."
+    }
+  }
+}

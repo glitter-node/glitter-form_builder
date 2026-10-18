@@ -1,0 +1,36 @@
+{
+  "version": "1.0.0", "layout_name": "admin_form_builder_form_index", "extends": "_admin_base",
+  "permissions": ["glitter-form_builder.forms.read"],
+  "meta": { "title": "$t:glitter-form_builder.admin.forms.title", "description": "$t:glitter-form_builder.admin.forms.description" },
+  "state": { "keyword": "", "status": "" },
+  "data_sources": [{
+    "id": "forms", "type": "api", "endpoint": "/api/modules/glitter-form_builder/admin/forms", "method": "GET", "auto_fetch": true, "auth_required": true,
+    "params": { "search": "{{_local.keyword}}", "status": "{{_local.status}}", "page": "{{query.page}}", "per_page": "{{query.per_page || 20}}" },
+    "fallback": { "data": { "data": [], "meta": { "current_page": 1, "last_page": 1, "total": 0 } } }
+  }],
+  "slots": { "content": [{
+    "type": "basic", "name": "Div", "props": { "className": "gfb-admin admin-page-content-responsive-fluid space-y-6", "data-module": "glitter-form_builder" }, "children": [
+      { "id": "gfb_index_header", "type": "basic", "name": "Div", "props": { "className": "gfb-admin-header" }, "children": [
+        { "id": "gfb_index_header_copy", "type": "basic", "name": "Div", "props": { "className": "gfb-admin-header-copy" }, "children": [
+          { "type": "basic", "name": "H1", "props": { "className": "gfb-admin-header-title" }, "text": "$t:glitter-form_builder.admin.forms.title" },
+          { "type": "basic", "name": "P", "props": { "className": "gfb-admin-header-description" }, "text": "$t:glitter-form_builder.admin.forms.description" }
+        ] },
+        { "id": "gfb_index_header_actions", "type": "basic", "name": "Div", "props": { "className": "gfb-admin-header-actions" }, "children": [
+          { "type": "basic", "name": "Button", "props": { "type": "button", "className": "gfb-header-action", "disabled": "{{forms?.data?.abilities?.can_create !== true}}" }, "actions": [{ "type": "click", "handler": "navigate", "params": { "path": "/admin/form-builder/forms/create" } }], "children": [{ "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.forms.create" }] }
+        ] }
+      ] },
+      { "type": "basic", "name": "Div", "props": { "className": "gfb-panel gfb-filter-bar" }, "children": [
+        { "type": "basic", "name": "Input", "props": { "value": "{{_local.keyword}}", "placeholder": "$t:glitter-form_builder.admin.forms.search" }, "actions": [{ "type": "change", "handler": "setState", "params": { "target": "local", "keyword": "{{$event.target.value}}" } }] },
+        { "type": "composite", "name": "Select", "props": { "value": "{{_local.status}}", "options": [{ "value": "", "label": "$t:glitter-form_builder.admin.forms.status_all" }, { "value": "draft", "label": "$t:glitter-form_builder.admin.status.draft" }, { "value": "published", "label": "$t:glitter-form_builder.admin.status.published" }, { "value": "archived", "label": "$t:glitter-form_builder.admin.status.archived" }] }, "actions": [{ "type": "change", "handler": "setState", "params": { "target": "local", "status": "{{$event.target.value}}" } }] },
+        { "type": "basic", "name": "Button", "props": { "type": "button" }, "actions": [{ "type": "click", "handler": "refetchDataSource", "params": { "dataSourceId": "forms" } }], "children": [{ "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.actions.search" }] }
+      ] },
+      { "type": "basic", "name": "Div", "props": { "className": "gfb-panel" }, "children": [
+        { "type": "basic", "name": "Div", "iteration": { "source": "{{forms.data.data}}", "item_var": "form" }, "children": [
+          { "type": "basic", "name": "Span", "text": "{{form.title || form.slug}}" }, { "type": "basic", "name": "Span", "text": "{{form.slug}}" }, { "type": "basic", "name": "Span", "text": "{{form.status}}" }, { "type": "basic", "name": "Span", "text": "{{form.current_revision || '-'}}" }, { "type": "basic", "name": "Span", "text": "{{form.updated_at}}" },
+          { "type": "basic", "name": "Button", "props": { "type": "button" }, "actions": [{ "type": "click", "handler": "navigate", "params": { "path": "/admin/form-builder/forms/{{form.uuid}}/edit" } }], "children": [{ "type": "basic", "name": "Span", "text": "$t:glitter-form_builder.admin.actions.edit" }] }
+        ] },
+        { "type": "basic", "name": "Span", "if": "{{!forms.data.data || forms.data.data.length === 0}}", "text": "$t:glitter-form_builder.admin.forms.empty" }
+      ] }
+    ]
+  }] }
+}
