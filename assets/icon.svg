@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Glitter Directory</title>
+  <desc id="desc">A directory grid transforming into structured content listings.</desc>
+  <rect width="512" height="512" rx="112" fill="#111827"/>
+  <rect x="82" y="104" width="348" height="304" rx="30" fill="#F8FAFC"/>
+  <path d="M82 134c0-16.569 13.431-30 30-30h288c16.569 0 30 13.431 30 30v48H82z" fill="#38BDF8"/>
+  <circle cx="118" cy="143" r="9" fill="#111827"/>
+  <circle cx="146" cy="143" r="9" fill="#111827" opacity=".5"/>
+  <circle cx="174" cy="143" r="9" fill="#111827" opacity=".25"/>
+  <rect x="112" y="214" width="106" height="76" rx="13" fill="#0F766E"/>
+  <rect x="112" y="306" width="106" height="76" rx="13" fill="#99F6E4"/>
+  <rect x="242" y="214" width="158" height="15" rx="7.5" fill="#0F172A"/>
+  <rect x="242" y="243" width="126" height="12" rx="6" fill="#94A3B8"/>
+  <rect x="242" y="270" width="88" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="242" y="306" width="158" height="15" rx="7.5" fill="#0F172A"/>
+  <rect x="242" y="335" width="126" height="12" rx="6" fill="#94A3B8"/>
+  <rect x="242" y="362" width="88" height="12" rx="6" fill="#CBD5E1"/>
+</svg>
